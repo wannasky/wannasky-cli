@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+
+const commander = require('commander'),
+    chalk = require('chalk'),
+    path = require('path'),
+    fs = require('fs'),
+    httpServer = require('../lib/http-server');
+    logger = require('../lib/logger');
+
+//默认配置文件名
+const DEFAULT_CONFIG_FILE_NAME = 'wans.config.js';
+
+/**
+ * 帮助
+ */
+commander.on('--help', () => {
+    console.log();
+    console.log('wans server', chalk.cyan('<?fileName.config.js>'));
+    console.log('   1. 不指定配置文件时，默认在根目录获取wans.config.js文件配置');
+    console.log('   2. 指定fileName.config.js时，以此配置启动');
+    console.log('   3. fileName.config.js配置选项如下：');
+    console.log([
+        `       ${chalk.cyan('port')}             端口号 <number> ,必填项`,
+        `${chalk.cyan('root')}             根目录 <string>，必填项`,
+        `${chalk.cyan('headers')}          请求头设置 <object>`,
+        `${chalk.cyan('ssl')}              ssl证书设置 <object <cert:string, key:string>>`,
+        `${chalk.cyan('cors')}             跨域设置 <boolean>`,
+        `${chalk.cyan('local')}            本地静态资源重定向 <object>`,
+        `${chalk.cyan('proxy')}            代理服务器配置 <object>`,
+        `${chalk.cyan('router')}           路由设置 <object>`
+    ].join('\n       '));
+});
+
+commander.parse(process.argv);
+
+//配置文件基本参数验证
+const doCheck = (config) => {
+    let result = true;
+    if(!config.port){
+        result = false;
+        logger.error('请指定代理服务器端口号');
+    }
+    if(!config.root){
+        result = false;
+        logger.error('请指定代理服务器根目录');
+    }
+    return result;
+}
+
+/**
+ * server启动配置
+ */
+let configFileName = commander.args[0] || DEFAULT_CONFIG_FILE_NAME;
+let cwd = process.cwd();
+let configPath = path.resolve(cwd, configFileName);
+if(fs.existsSync(configPath)){
+    const config = require(configPath);
+    if(doCheck(config)){
+        let server = httpServer.createServer(config);
+        server.listen(server.port, '127.0.0.1', () => {
+            logger.success('服务器启动成功,端口号：',server.port);
+        });
+    }
+}else{
+    logger.error('配置文件不存在:', configPath);
+}
+
+

@@ -1,0 +1,31 @@
+{
+  "name": "@wannasky/cli",
+  "version": "1.0.0",
+  "description": "cli tool for freedom ^><^",
+  "main": "lib/cli/index.js",
+  "keywords": [
+    "wans",
+    "wans-cli"
+  ],
+  "bin": {
+    "wans": "./bin/wans"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wannasky/wannasky-cli.git"
+  },
+  "author": "wannasky",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.3.2",
+    "commander": "^2.15.1",
+    "corser": "^2.0.1",
+    "ecstatic": "^3.2.0",
+    "http-proxy": "^1.16.2",
+    "mime": "^2.2.0",
+    "union": "^0.4.6",
+    "body-parser": "^1.18.2"
+  },
+  "devDependencies": {
+  }
+}
