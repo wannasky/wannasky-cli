@@ -1,7 +1,7 @@
 module.exports = {
 
     //端口号
-    port: '8080',
+    port: 8080,
 
     //根目录
     root: './public',

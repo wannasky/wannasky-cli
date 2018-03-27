@@ -1,4 +1,4 @@
-## @wans/cli
+## @wannasky/cli
 脚手架工具，以后慢慢维护，目前的功能有 wans server
 
 ### wans server
@@ -17,7 +17,7 @@
 module.exports = {
 
     //端口号
-    port: '8080',
+    port: 8080,
 
     //根目录
     root: './public',
