@@ -22,6 +22,7 @@ commander.on('--help', () => {
     console.log([
         `       ${chalk.cyan('port')}             端口号 <number> ,必填项`,
         `${chalk.cyan('root')}             根目录 <string>，必填项`,
+        `${chalk.cyan('cache')}            缓存设置，单位秒 <number>`,
         `${chalk.cyan('headers')}          请求头设置 <object>`,
         `${chalk.cyan('ssl')}              ssl证书设置 <object <cert:string, key:string>>`,
         `${chalk.cyan('cors')}             跨域设置 <boolean>`,
