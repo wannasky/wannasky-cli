@@ -66,4 +66,6 @@ if(fs.existsSync(configPath)){
     logger.error('配置文件不存在:', configPath);
 }
 
-
+process.on('exit', () => {
+    console.log('Bye.');
+})
