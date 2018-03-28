@@ -4,8 +4,10 @@ const commander = require('commander'),
     chalk = require('chalk'),
     path = require('path'),
     fs = require('fs'),
-    httpServer = require('../lib/http-server');
-    logger = require('../lib/logger');
+    file = require('../lib/file'),
+    httpServer = require('../lib/http-server'),
+    progress = require('../lib/progress');
+logger = require('../lib/logger');
 
 //默认配置文件名
 const DEFAULT_CONFIG_FILE_NAME = 'wans.config.js';
@@ -26,10 +28,13 @@ commander.on('--help', () => {
         `${chalk.cyan('headers')}          请求头设置 <object>`,
         `${chalk.cyan('ssl')}              ssl证书设置 <object <cert:string, key:string>>`,
         `${chalk.cyan('cors')}             跨域设置 <boolean>`,
-        `${chalk.cyan('local')}            本地静态资源重定向 <object>`,
+        `${chalk.cyan('local')}            本地静态资源重定向 <object>,采用软链接的方式`,
         `${chalk.cyan('proxy')}            代理服务器配置 <object>`,
         `${chalk.cyan('router')}           路由设置 <object>`
     ].join('\n       '));
+    console.log();
+    console.log('wans server clean');
+    console.log('   清除建立server时产生的symlink');
 });
 
 commander.parse(process.argv);
@@ -37,11 +42,11 @@ commander.parse(process.argv);
 //配置文件基本参数验证
 const doCheck = (config) => {
     let result = true;
-    if(!config.port){
+    if (!config.port) {
         result = false;
         logger.error('请指定代理服务器端口号');
     }
-    if(!config.root){
+    if (!config.root) {
         result = false;
         logger.error('请指定代理服务器根目录');
     }
@@ -52,20 +57,44 @@ const doCheck = (config) => {
  * server启动配置
  */
 let configFileName = commander.args[0] || DEFAULT_CONFIG_FILE_NAME;
-let cwd = process.cwd();
-let configPath = path.resolve(cwd, configFileName);
-if(fs.existsSync(configPath)){
-    const config = require(configPath);
-    if(doCheck(config)){
-        let server = httpServer.createServer(config);
-        server.listen(server.port, '127.0.0.1', () => {
-            logger.success('服务器启动成功,端口号：',server.port);
-        });
+
+//建立server
+const createServer = () => {
+    let cwd = process.cwd();
+    let configPath = path.resolve(cwd, configFileName);
+    if (fs.existsSync(configPath)) {
+        const config = require(configPath);
+        if (doCheck(config)) {
+            let server = httpServer.createServer(config);
+            server.listen(server.port, '127.0.0.1', () => {
+                logger.success('服务器启动成功,端口号：', server.port);
+            });
+        }
+    } else {
+        logger.error('配置文件不存在:', configPath);
     }
-}else{
-    logger.error('配置文件不存在:', configPath);
 }
 
-process.on('exit', () => {
-    console.log('Bye.');
-})
+//删除创建server后的软链接
+const cleanServer = () => {
+    let pp = progress.create({repeatTotal: 100, loadMessage: '---2s后删除当前目录下的所有软链接'});
+    pp.start(2000, () => {
+        let links = file.filter(process.cwd(), stat => stat.isSymbolicLink());
+        try {
+            links.forEach(link => {
+                fs.unlinkSync(link);
+            });
+        } catch (error) {
+            logger.error('软链接删除失败');
+        }
+    });
+}
+
+//特殊指令处理
+switch (configFileName) {
+    case 'clean':
+        cleanServer();
+        break;
+    default:
+        createServer();
+}
