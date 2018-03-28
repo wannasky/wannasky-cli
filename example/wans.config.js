@@ -4,12 +4,7 @@ module.exports = {
     port: 8080,
 
     //根目录
-    root: './public',
-
-    //本地静态资源路径重定向
-    local: {
-        '^/test/': '../test/',
-    },
+    root: './',
 
     //代理设置
     proxy: {
