@@ -29,7 +29,13 @@ module.exports = {
 
     //代理设置
     proxy: {
-        '^/5aV1bjqh_Q23odCf': 'https://ss0.bdstatic.com/'
+        '^/5aV1bjqh_Q23odCf': 'https://ss0.bdstatic.com/',
+        '/api/test': {
+            target: 'https://test.dyn.com',
+            headers: {
+                host: 'aa.cc.com'
+            }
+        }
     },
 
     //路由设置
