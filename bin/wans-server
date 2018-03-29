@@ -30,7 +30,8 @@ commander.on('--help', () => {
         `${chalk.cyan('cors')}             跨域设置 <boolean>`,
         `${chalk.cyan('local')}            本地静态资源重定向 <object>,采用软链接的方式`,
         `${chalk.cyan('proxy')}            代理服务器配置 <object>`,
-        `${chalk.cyan('router')}           路由设置 <object>`
+        `${chalk.cyan('router')}           路由设置 <object>`,
+        `${chalk.cyan('testJsonDir')}      测试json目录 <string>`
     ].join('\n       '));
     console.log();
     console.log('   4. 配置文件中proxy代理配置中的每项value可以为 <string> 或者 <object>');

@@ -1,6 +1,6 @@
 {
   "name": "@wannasky/cli",
-  "version": "1.2.7",
+  "version": "1.3.1",
   "description": "cli tool for freedom ^><^",
   "main": "lib/cli/index.js",
   "keywords": [

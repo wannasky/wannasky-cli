@@ -29,5 +29,9 @@ module.exports = {
                 res.json({success: true})
             }
         }
-    }
+    },
+
+    //测试json目录
+    //当路由，代理，静态资源都获取不到时，再尝试获取.json后缀的文件
+    testJsonDir: './__test__/json'
 }
