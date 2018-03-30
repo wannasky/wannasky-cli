@@ -6,6 +6,10 @@ module.exports = {
     //根目录
     root: './',
 
+    local: {
+        'test': 'D:\\workspace\\test-workspace'
+    },
+
     //代理设置
     proxy: {
         '^/5aV1bjqh_Q23odCf': {

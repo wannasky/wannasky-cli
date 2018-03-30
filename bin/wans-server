@@ -67,7 +67,8 @@ let configFileName = commander.args[0] || DEFAULT_CONFIG_FILE_NAME;
 const createServer = () => {
     let cwd = process.cwd();
     let configPath = path.resolve(cwd, configFileName);
-    if (fs.existsSync(configPath)) {
+    try{
+        fs.lstatSync(configPath);
         const config = require(configPath);
         if (doCheck(config)) {
             let server = httpServer.createServer(config);
@@ -75,24 +76,63 @@ const createServer = () => {
                 logger.success('服务器启动成功,端口号：', server.port);
             });
         }
-    } else {
-        logger.error('配置文件不存在:', configPath);
+    }catch(error){
+        logger.error(error.message);
+    }
+}
+
+//删除指定目录下的软链接
+const removeSymLink = (directory) => {
+    let links = file.filter(directory, stat => stat.isSymbolicLink());
+    try {
+        links.forEach(link => {
+            fs.unlinkSync(link);
+            logger.debug(link,'已删除');
+        });
+    } catch (error) {
+        logger.error('软链接删除失败');
     }
 }
 
 //删除创建server后的软链接
 const cleanServer = () => {
-    let pp = progress.create({repeatTotal: 100, loadMessage: '---2s后删除当前目录下的所有软链接'});
-    pp.start(2000, () => {
-        let links = file.filter(process.cwd(), stat => stat.isSymbolicLink());
-        try {
-            links.forEach(link => {
-                fs.unlinkSync(link);
-            });
-        } catch (error) {
-            logger.error('软链接删除失败');
+    let cwd = process.cwd();
+    let configPath = path.resolve(cwd, configFileName);
+
+    const removeProgressDefault = () => {
+        let pp = progress.create({repeatTotal: 100, loadMessage: '---2s后删除当前目录下的所有软链接'});
+        pp.start(2000, () => {
+            removeSymLink(process.cwd());
+        });
+    }
+
+    try{
+        fs.lstatSync(configPath);
+        const config = require(configPath);
+        if(doCheck(config)){
+            if(config.local){
+                logger.info('当前目录下存在',chalk.cyan(configFileName),' 文件，且存在 local 配置项，2s后删除所配置的软链接');
+                let pp = progress.create({repeatTotal: 100, repeatMessage:'--', loadMessage: '-'});
+                pp.start(2000, () => {
+                    let targetPath;
+                    for(let key in config.local){
+                        targetPath = path.normalize(path.join(cwd, config.root, key));
+                        try{
+                            fs.readlinkSync(targetPath);
+                            fs.unlinkSync(targetPath);
+                            logger.debug(targetPath,'已删除');
+                        }catch(err){
+
+                        }
+                    }
+                });
+            }else{
+                removeProgressDefault();
+            }
         }
-    });
+    }catch(error){
+        removeProgressDefault();
+    }
 }
 
 //特殊指令处理
