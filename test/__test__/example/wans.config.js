@@ -4,17 +4,12 @@ module.exports = {
     port: 8080,
 
     //根目录
-    root: './',
-
-    local: {
-        'test': 'D:\\workspace\\test-workspace'
-    },
+    root: './test/__test__/example/public/',
 
     //代理设置
     proxy: {
-        '^/5aV1bjqh_Q23odCf': {
-            target: 'https://ss0.bdstatic.com/',
-            headers: {}
+        '/home/xman/': {
+            target: 'https://www.baidu.com'
         }
     },
 

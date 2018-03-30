@@ -1,6 +1,6 @@
 {
   "name": "@wannasky/cli",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "cli tool for freedom ^><^",
   "main": "lib/cli/index.js",
   "keywords": [
@@ -26,5 +26,8 @@
     "mime": "^2.2.0",
     "union": "^0.4.6"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.0.5"
+  }
 }
