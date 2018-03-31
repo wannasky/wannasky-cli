@@ -1,5 +1,8 @@
 module.exports = {
 
+    //没有日志输出
+    silent: true,
+
     //端口号
     port: 8080,
 
@@ -12,6 +15,10 @@ module.exports = {
             target: 'https://www.baidu.com'
         }
     },
+
+    // local: {
+    //     '/test': '../test'
+    // },
 
     //路由设置
     router: {
