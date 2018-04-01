@@ -16,6 +16,11 @@ module.exports = {
         }
     },
 
+    //
+    mock: {
+
+    },
+
     // local: {
     //     '/test': '../test'
     // },
@@ -24,8 +29,26 @@ module.exports = {
     router: {
 
         '/router/:id': {
-            get: (req, res, query) => {
-                res.json({name:'wannasky'})
+            get: (req, res, query, mock) => {
+                res.json(mock({
+                    "status": 2000,
+                    "message": "成功",
+                    "total": mock.Link('result').length,
+                    "result": mock.Array({
+                        length: mock.Random(0,10),
+                        item: mock.Object({
+                            id: mock.AutoIncrement(0),
+                            name: mock.String({prefix:'app-',maxLength:4,minLength:2}),
+                            age: mock.Number(10,40),
+                            date: mock.Date({start: '2018-03-03', end:'2018-07-23', format:'YYYY-MM-DD'}),
+                            params: mock.Random([null, undefined, 2, 6]),
+                            person: mock.Object({
+                                name: mock.String({minLength:2, maxLength:4}),
+                                male: mock.Random([true, false])
+                            })
+                        })
+                    })
+                }))
             }
         },
 
