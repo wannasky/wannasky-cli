@@ -42,14 +42,24 @@ module.exports = {
     router: {
 
         '/router/:id': {
-            get: (req, res, query) => {
+            get: (req, res, query, mock) => {
                 console.log('query', query);
-                res.json({name:'wannasky'})
+                res.json(mock(mock.object({
+                    name: 'wannasky',
+                    age: 25,
+                    books: mock.array({
+                        length: mock.random(5, 10),
+                        item: mock.object({
+                            title: mock.text('book-', mock.index),
+                            isbn: mock.random(1000, 2000, true)
+                        })
+                    })
+                })))
             }
         },
 
         '/wannasky/test': {
-            post: (req, res, query) => {
+            post: (req, res, query, mock) => {
                 console.log('query', query);
                 res.json({success: true})
             }

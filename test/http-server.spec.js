@@ -65,5 +65,27 @@ describe('测试 lib/http-server.js', () => {
     //跳过测试，因为需要管理员权限操作
     describe.skip('#测试本地软链接', () => {
 
-    })
+    });
+
+    //添加mock支持
+    describe('#自定义mock数据测试', () => {
+
+        it('发送get请求至http://127.0.0.1:8080/module/test', done => {
+            http.get('http://127.0.0.1:8080/module/test', (res) => {
+                let chunks = '';
+                res.on('data', chunk => {
+                    chunks += chunk;
+                });
+                res.on('end', () => {
+                    let data = JSON.parse(chunks);
+                    assert.equal(data.status, 200);
+                    assert.isAtLeast(data.list.length,5);
+                    done();
+                });
+                res.on('error', (error) => {
+                    done(error);
+                })
+            });
+        })
+    });
 })
