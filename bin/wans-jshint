@@ -52,7 +52,7 @@ try{
     fs.lstatSync(configPath);
     const config = require(configPath);
     if (doCheck(config)) {
-        jshint(config);
+        jshint(config.jsHint);
     }
 }catch(error){
     logger.error(error.message);
