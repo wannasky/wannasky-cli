@@ -21,6 +21,16 @@ module.exports = {
 
     //根目录
     root: './public',
+    
+    //jshint配置
+    jsHint: {
+        files: ['src/test/**/*.js', 'src/index.js'],
+        exclude: ['src/test/**/*.spec.js', 'src/test/**/*.min.js'],
+        options: {
+            eqeqeq: true
+            //...
+        }
+    },
 
     //本地静态资源路径重定向
     local: {

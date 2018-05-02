@@ -16,9 +16,13 @@ module.exports = {
         }
     },
 
-    //
-    mock: {
-
+    //jsHint
+    jsHint:{
+        files: ['src/**/*.js'],
+        exclude: ['src/**/*.min.js'],
+        options: {
+            //...
+        }
     },
 
     // local: {
