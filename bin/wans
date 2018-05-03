@@ -5,4 +5,5 @@ require('commander')
     .usage('<command> [options]')
     .command('server', '创建服务器')
     .command('jshint', '代码检查')
+    .command('compress', '代码压缩')
     .parse(process.argv);

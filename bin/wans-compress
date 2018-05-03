@@ -1,0 +1,70 @@
+#!/usr/bin/env node
+
+const commander = require('commander'),
+    chalk = require('chalk'),
+    path = require('path'),
+    fs = require('fs'),
+    compress = require('../lib/compress'),
+    logger = require('../lib/logger').createLogger();
+
+//默认配置文件名
+const DEFAULT_CONFIG_FILE_NAME = 'wans.config.js';
+
+/**
+ * 帮助
+ */
+commander.on('--help', () => {
+    console.log();
+    console.log('wans compress', chalk.cyan('<?fileName.config.js>'));
+    console.log('   1. 不指定配置文件时，默认在根目录获取wans.config.js文件配置');
+    console.log('   2. 指定fileName.config.js时，以此配置进行代码检查');
+    console.log('   3. fileName.config.js配置选项如下：');
+    console.log([
+        `       ${chalk.cyan('compress')}             compress配置选项 {Object} 必填项`,
+        `   compress 配置信息如下，更多请参考 README.md ${chalk.cyan('compress')} 选项：`,
+        `       ${chalk.cyan('src')}             压缩代码源文件目录 {string} 非必填 默认 './'`,
+        `       ${chalk.cyan('dist')}            压缩代码目标文件目录 {string} 非必填 默认 './'`,
+        `       ${chalk.cyan('filename')}        文件压缩后的命名规则 {string|Object} 非必填 默认 '[name].min.[ext]' 详情如下：`,
+        `           ${chalk.cyan('[name]')}         文件名`,
+        `           ${chalk.cyan('[ext]')}          文件后缀`,
+        ``,
+        `           可为对象，根据后缀名自定义命名规则，例如：`,
+        `               {`,
+        `                   js: [name].min.[ext],`,
+        `                   css: [name].[ext]`,
+        `               }`,
+        `       ${chalk.cyan('files')}           需要压缩的文件 {Array} 必填项`,
+        `       ${chalk.cyan('exclude')}         不需要压缩的文件 {Array} 非必填`,
+        `       ${chalk.cyan('framework')}       项目框架使用 {string} 目前只支持 angular 非必填`
+    ].join('\n       '));
+});
+
+commander.parse(process.argv);
+
+
+//配置文件基本参数验证
+const doCheck = (config) => {
+    let result = true;
+    if (!config.compress) {
+        result = false;
+        logger.error('请配置compress参数');
+    }
+    return result;
+}
+
+/**
+ * server启动配置
+ */
+let configFileName = commander.args[0] || DEFAULT_CONFIG_FILE_NAME;
+
+let cwd = process.cwd();
+let configPath = path.resolve(cwd, configFileName);
+try{
+    fs.lstatSync(configPath);
+    const config = require(configPath);
+    if (doCheck(config)) {
+        compress(config.compress);
+    }
+}catch(error){
+    logger.error(error.message);
+}
