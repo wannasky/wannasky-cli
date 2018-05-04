@@ -72,7 +72,7 @@ const createServer = () => {
         const config = require(configPath);
         if (doCheck(config)) {
             let server = httpServer.createServer(config);
-            server.listen(server.port, '127.0.0.1', () => {
+            server.listen(server.port, () => {
                 logger.success('服务器启动成功,端口号：', server.port);
             });
         }
