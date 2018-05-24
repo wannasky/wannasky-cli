@@ -5,7 +5,7 @@
 
 1. wans server config.js
    
-   指定**config.js**配置文件启动，不知道调用根目录wans.config.js
+   指定**config.js**配置文件启动，不指定调用根目录wans.config.js
 
 2. wans server --help
 
@@ -16,7 +16,7 @@
 
 1. wans jshint config.js
    
-   指定**config.js**配置文件启动，不知道调用根目录wans.config.js
+   指定**config.js**配置文件启动，不指定调用根目录wans.config.js
 
 2. wans jshint --help
 
@@ -26,7 +26,7 @@
 
 1. wans compress config.js
    
-   指定**config.js**配置文件启动，不知道调用根目录wans.config.js
+   指定**config.js**配置文件启动，不指定调用根目录wans.config.js
 
 2. wans compress --help
 
