@@ -38,7 +38,7 @@ commander.on('--help', () => {
     console.log('        a) 当为字符串时，即代理服务器的地址配置');
     console.log('        b) 当为对象时，必须有 【target】 用以表示代理服务器地址，其他配置会作为reqest参数设置，比如 【headers】');
     console.log();
-    console.log('wans server clean');
+    console.log('wans server ', chalk.cyan('clean'));
     console.log('   清除建立server时产生的symlink');
 });
 

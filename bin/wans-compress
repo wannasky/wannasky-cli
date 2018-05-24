@@ -5,7 +5,7 @@ const commander = require('commander'),
     path = require('path'),
     fs = require('fs'),
     compress = require('../lib/compress'),
-    logger = require('../lib/logger').createLogger();
+    logger = require('../lib/logger').createLogger({prefix: '@wans/cli/compress'});
 
 //默认配置文件名
 const DEFAULT_CONFIG_FILE_NAME = 'wans.config.js';
@@ -22,6 +22,7 @@ commander.on('--help', () => {
     console.log([
         `       ${chalk.cyan('compress')}             compress配置选项 {Object} 必填项`,
         `   compress 配置信息如下，更多请参考 README.md ${chalk.cyan('compress')} 选项：`,
+        `       ${chalk.cyan('watch')}           是否监听文件变化 {boolean} 非必填 默认 false`,
         `       ${chalk.cyan('src')}             压缩代码源文件目录 {string} 非必填 默认 './'`,
         `       ${chalk.cyan('dist')}            压缩代码目标文件目录 {string} 非必填 默认 './'`,
         `       ${chalk.cyan('filename')}        文件压缩后的命名规则 {string|Object} 非必填 默认 '[name].min.[ext]' 详情如下：`,
@@ -37,6 +38,8 @@ commander.on('--help', () => {
         `       ${chalk.cyan('exclude')}         不需要压缩的文件 {Array} 非必填`,
         `       ${chalk.cyan('framework')}       项目框架使用 {string} 目前只支持 angular 非必填`
     ].join('\n       '));
+    console.log('wans compress', chalk.cyan('clean'));
+    console.log('   清除压缩后的文件和目录');
 });
 
 commander.parse(process.argv);
@@ -57,14 +60,45 @@ const doCheck = (config) => {
  */
 let configFileName = commander.args[0] || DEFAULT_CONFIG_FILE_NAME;
 
-let cwd = process.cwd();
-let configPath = path.resolve(cwd, configFileName);
-try{
-    fs.lstatSync(configPath);
-    const config = require(configPath);
-    if (doCheck(config)) {
-        compress(config.compress);
+// 压缩
+const startCompress = () => {
+    let cwd = process.cwd();
+    let configPath = path.resolve(cwd, configFileName);
+    try{
+        fs.lstatSync(configPath);
+        const config = require(configPath);
+        if (doCheck(config)) {
+            compress.compress(config.compress);
+        }
+    }catch(error){
+        logger.error(error.message);
     }
-}catch(error){
-    logger.error(error.message);
+}
+
+// 清除压缩的文件
+const cleanCompress = () => {
+    let cwd = process.cwd();
+    let configPath = path.resolve(cwd, DEFAULT_CONFIG_FILE_NAME);
+    try{
+        fs.lstatSync(configPath);
+        const config = require(configPath);
+        if(doCheck(config)){
+            if(config.compress) {
+                compress.clean(cofig.compress);
+            }else {
+                logger.error('未发现 compress 配置项，请检查后重试');
+            }
+        }
+    }catch(error){
+        logger.error(error.message);
+    }
+}
+
+//特殊指令处理
+switch (configFileName) {
+    case 'clean':
+        cleanCompress();
+        break;
+    default:
+        startCompress();
 }
