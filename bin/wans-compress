@@ -84,7 +84,7 @@ const cleanCompress = () => {
         const config = require(configPath);
         if(doCheck(config)){
             if(config.compress) {
-                compress.clean(cofig.compress);
+                compress.clean(config.compress);
             }else {
                 logger.error('未发现 compress 配置项，请检查后重试');
             }
