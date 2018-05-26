@@ -14,7 +14,8 @@ describe('compress测试', () => {
             watch: true,
             src: './test/__test__/compress/src',
             dist: './test/__test__/compress/dist',
-            files: ['**/*.js', '/**/*.css', '**/*.scss'],
+            // files: ['**/*.js', '/**/*.css', '**/*.scss'],
+            files: ['**/*.scss','**/*.js'],
             exclude: ['/**/*.min.js', '/lib/**/*.js'],
             framework: ['angular'],
             filename: {
@@ -30,7 +31,7 @@ describe('compress测试', () => {
 
     it('#clean', function(done) {
         setTimeout(function () {
-            clean(options.compress);
+            //clean(options.compress);
             done();
         },1000);
     });
