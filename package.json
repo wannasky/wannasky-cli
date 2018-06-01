@@ -1,11 +1,12 @@
 {
     "name": "@wannasky/cli",
-    "version": "1.6.3",
-    "description": "cli tool for freedom ^><^",
+    "version": "1.6.4",
+    "description": "前端打包cli工具",
     "main": "lib/cli/index.js",
     "keywords": [
-        "wans",
-        "wans-cli"
+        "compress",
+        "jshint",
+        "http-proxy"
     ],
     "bin": {
         "wans": "./bin/wans"
