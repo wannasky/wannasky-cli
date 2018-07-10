@@ -36,7 +36,8 @@ commander.on('--help', () => {
         `               }`,
         `       ${chalk.cyan('files')}           需要压缩的文件 {Array} 必填项`,
         `       ${chalk.cyan('exclude')}         不需要压缩的文件 {Array} 非必填`,
-        `       ${chalk.cyan('framework')}       项目框架使用 {string} 目前只支持 angular 非必填`
+        `       ${chalk.cyan('framework')}       项目框架使用 {string} 目前只支持 angular 非必填`,
+        `       ${chalk.cyan('options')}         压缩自定义参数 {Object} 非必填`
     ].join('\n       '));
     console.log('wans compress', chalk.cyan('clean'));
     console.log('   清除压缩后的文件和目录');
