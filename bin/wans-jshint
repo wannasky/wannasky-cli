@@ -2,58 +2,33 @@
 
 const commander = require('commander'),
     chalk = require('chalk'),
-    path = require('path'),
-    fs = require('fs'),
-    jshint = require('../lib/jshint'),
-    logger = require('../lib/logger').createLogger();
+    jshint = require('../lib/core/jshint'),
+    Config = require('../lib/core/config'),
+    help = require('../lib/util/helpLogger'),
+    logger = require('../lib/util/logger').createLogger({prefix: '@wans/cli/jshint'});
 
-//默认配置文件名
-const DEFAULT_CONFIG_FILE_NAME = 'wans.config.js';
+
 
 /**
  * 帮助
  */
 commander.on('--help', () => {
-    console.log();
-    console.log('wans jshint', chalk.cyan('<?fileName.config.js>'));
-    console.log('   1. 不指定配置文件时，默认在根目录获取wans.config.js文件配置');
-    console.log('   2. 指定fileName.config.js时，以此配置进行代码检查');
-    console.log('   3. fileName.config.js配置选项如下：');
-    console.log([
-        `       ${chalk.cyan('jsHint')}             jshint配置选项 {Object} 必填项`,
-        `   jshint 配置信息如下，更多请参考 README.md ${chalk.cyan('jsHint')} 选项：`,
-        `       ${chalk.cyan('files')}           需要检测的文件 {Array} 必填项`,
-        `       ${chalk.cyan('exclude')}         不需要检测的文件 {Array} 非必填`,
-        `       ${chalk.cyan('options')}         jsHint检测配置文件 {Object} 非必填`
-    ].join('\n       '));
+    help.l1.print();
+    help.l1.print(`wans jshint  ${chalk.cyan('<?wans.config.js>')}`);
+    help.l2.print('1. 不指定配置文件时，默认在根目录获取wans.config.js文件配置');
+    help.l2.print('2. wans.config.js配置选项如下：');
+    help.l3.print('jsHint', `jshint配置选项 {Object} 必填项`);
+    help.l4.print('files', `需要检测的文件 {Array} 必填项`);
+    help.l4.print('exclude', `不需要检测的文件 {Array} 非必填`);
+    help.l4.print('options', `jsHint检测配置文件 {Object} 非必填`);
 });
 
 commander.parse(process.argv);
 
+let config = Config.createConfig(commander.args[0]);
 
-//配置文件基本参数验证
-const doCheck = (config) => {
-    let result = true;
-    if (!config.jsHint) {
-        result = false;
-        logger.error('请配置jsHint参数');
-    }
-    return result;
-}
-
-/**
- * server启动配置
- */
-let configFileName = commander.args[0] || DEFAULT_CONFIG_FILE_NAME;
-
-let cwd = process.cwd();
-let configPath = path.resolve(cwd, configFileName);
-try{
-    fs.lstatSync(configPath);
-    const config = require(configPath);
-    if (doCheck(config)) {
-        jshint(config.jsHint);
-    }
-}catch(error){
-    logger.error(error.message);
+if(config.has('jsHint')){
+    jshint(config.get('jsHint'));
+}else{
+    logger.error('请配置jsHint参数');
 }

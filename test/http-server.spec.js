@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 const http = require('http');
-const httpServer = require('../lib/http-server');
+const httpServer = require('../lib/core/http-server');
 
 describe('测试 lib/http-server.js', () => {
 

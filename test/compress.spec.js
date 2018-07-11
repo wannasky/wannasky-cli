@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 
-const Comp = require('../lib/compress');
+const Comp = require('../lib/core/compress');
 
 const compress = Comp.compress;
 const clean = Comp.clean;

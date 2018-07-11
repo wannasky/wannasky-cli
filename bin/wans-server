@@ -4,86 +4,79 @@ const commander = require('commander'),
     chalk = require('chalk'),
     path = require('path'),
     fs = require('fs'),
-    file = require('../lib/file'),
-    httpServer = require('../lib/http-server'),
-    progress = require('../lib/progress'),
-    logger = require('../lib/logger').createLogger();
-
-//默认配置文件名
-const DEFAULT_CONFIG_FILE_NAME = 'wans.config.js';
+    fileUtil = require('../lib/util/fileUtil'),
+    httpServer = require('../lib/core/http-server'),
+    progress = require('../lib/util/progress'),
+    Config = require('../lib/core/config'),
+    help = require('../lib/util/helpLogger'),
+    logger = require('../lib/util/logger').createLogger({prefix: '@wans/cli/server'});
 
 /**
  * 帮助
  */
 commander.on('--help', () => {
-    console.log();
-    console.log('wans server', chalk.cyan('<?fileName.config.js>'));
-    console.log('   1. 不指定配置文件时，默认在根目录获取wans.config.js文件配置');
-    console.log('   2. 指定fileName.config.js时，以此配置启动');
-    console.log('   3. fileName.config.js配置选项如下：');
-    console.log([
-        `       ${chalk.cyan('port')}             端口号 <number> ,必填项`,
-        `${chalk.cyan('root')}             根目录 <string>，必填项`,
-        `${chalk.cyan('cache')}            缓存设置，单位秒 <number>`,
-        `${chalk.cyan('headers')}          请求头设置 <object>`,
-        `${chalk.cyan('ssl')}              ssl证书设置 <object <cert:string, key:string>>`,
-        `${chalk.cyan('cors')}             跨域设置 <boolean>`,
-        `${chalk.cyan('local')}            本地静态资源重定向 <object>,采用软链接的方式`,
-        `${chalk.cyan('proxy')}            代理服务器配置 <object>`,
-        `${chalk.cyan('router')}           路由设置 <object>`,
-        `${chalk.cyan('testJsonDir')}      测试json目录 <string>`
-    ].join('\n       '));
-    console.log();
-    console.log('   4. 配置文件中proxy代理配置中的每项value可以为 <string> 或者 <object>');
-    console.log('        a) 当为字符串时，即代理服务器的地址配置');
-    console.log('        b) 当为对象时，必须有 【target】 用以表示代理服务器地址，其他配置会作为reqest参数设置，比如 【headers】');
-    console.log();
-    console.log('wans server ', chalk.cyan('clean'));
-    console.log('   清除建立server时产生的symlink');
+    help.l1.print();
+    help.l1.print(`wans server  ${chalk.cyan('<?wans.config.js>')}`);
+    help.l2.print('1. 不指定配置文件时，默认在根目录获取wans.config.js文件配置');
+    help.l2.print('2. wans.config.js配置选项如下：');
+    help.l3.print('port', `端口号 {number} ,必填项`);
+    help.l3.print('root', `根目录 {string}，必填项`);
+    help.l3.print('cache', `缓存设置，单位秒 {number}`);
+    help.l3.print('headers', `请求头设置 {object}`);
+    help.l3.print('ssl', `ssl证书设置 {object {cert:string, key:string}}`);
+    help.l3.print('cors', `跨域设置 {boolean}`);
+    help.l3.print('local', `本地静态资源重定向 {object},采用软链接的方式`);
+    help.l3.print('proxy', `代理服务器配置 {object|string}`);
+    help.l3.print('','1. 当为字符串时，即代理服务器的地址配置');
+    help.l3.print('','2. 当为对象时，必须有[target]用以表示代理服务器地址，其他配置会作为reqest参数设置，比如headers');
+    help.l3.print('router', `路由设置 {object}，example:`);
+    help.l4.print('{');
+    help.l5.print(`'api/xx': {`);
+    help.l6.print(`// post...`);
+    help.l6.print(`// put...`);
+    help.l6.print(`// delete...`);
+    help.l6.print('get: function(req, res, query) {');
+    help.l7.print(`res.end('end')`);
+    help.l6.print('}');
+    help.l5.print('}');
+    help.l4.print('}');
+    help.l3.print('testJsonDir', `测试json目录 {string}`);
+    help.l1.print(`wans server ${chalk.cyan('clean')}`);
+    help.l2.print('清除建立server时产生的symlink');
 });
 
 commander.parse(process.argv);
 
-//配置文件基本参数验证
-const doCheck = (config) => {
-    let result = true;
-    if (!config.port) {
-        result = false;
-        logger.error('请指定代理服务器端口号');
-    }
-    if (!config.root) {
-        result = false;
-        logger.error('请指定代理服务器根目录');
-    }
-    return result;
+let config = Config.createConfig(commander.args[0]);
+
+//特殊指令处理
+switch (commander.args[0]) {
+    case 'clean':
+        cleanServer();
+        break;
+    default:
+        createServer();
 }
 
-/**
- * server启动配置
- */
-let configFileName = commander.args[0] || DEFAULT_CONFIG_FILE_NAME;
-
 //建立server
-const createServer = () => {
-    let cwd = process.cwd();
-    let configPath = path.resolve(cwd, configFileName);
-    try{
-        fs.lstatSync(configPath);
-        const config = require(configPath);
-        if (doCheck(config)) {
-            let server = httpServer.createServer(config);
-            server.listen(server.port, () => {
-                logger.success('服务器启动成功,端口号：', server.port);
-            });
-        }
-    }catch(error){
-        logger.error(error.message);
+function createServer () {
+    if(!config.has('port')){
+        logger.error('请指定代理服务器端口号');
+        return;
     }
+    if(!config.has('root')){
+        logger.error('请指定代理服务器根目录');
+        return;
+    }
+    let server = httpServer.createServer(config.get());
+    server.listen(server.port, () => {
+        logger.success('服务器启动成功,端口号：', server.port);
+    });
 }
 
 //删除指定目录下的软链接
-const removeSymLink = (directory) => {
-    let links = file.filter(directory, stat => stat.isSymbolicLink());
+function removeSymLink (directory) {
+    let links = fileUtil.filter(directory, stat => stat.isSymbolicLink());
     try {
         links.forEach(link => {
             fs.unlinkSync(link);
@@ -95,51 +88,32 @@ const removeSymLink = (directory) => {
 }
 
 //删除创建server后的软链接
-const cleanServer = () => {
-    let cwd = process.cwd();
-    let configPath = path.resolve(cwd, configFileName);
-
+function cleanServer  () {
+    let cwd = progress.cwd();
     const removeProgressDefault = () => {
         let pp = progress.create({repeatTotal: 100, loadMessage: '---2s后删除当前目录下的所有软链接'});
         pp.start(2000, () => {
-            removeSymLink(process.cwd());
+            removeSymLink(cwd);
         });
     }
 
-    try{
-        fs.lstatSync(configPath);
-        const config = require(configPath);
-        if(doCheck(config)){
-            if(config.local){
-                logger.info('当前目录下存在',chalk.cyan(configFileName),' 文件，且存在 local 配置项，2s后删除所配置的软链接');
-                let pp = progress.create({repeatTotal: 100, repeatMessage:'--', loadMessage: '-'});
-                pp.start(2000, () => {
-                    let targetPath;
-                    for(let key in config.local){
-                        targetPath = path.normalize(path.join(cwd, config.root, key));
-                        try{
-                            fs.readlinkSync(targetPath);
-                            fs.unlinkSync(targetPath);
-                            logger.debug(targetPath,'已删除');
-                        }catch(err){
+    if(config.has('local')){
+        logger.info('存在local 配置项，2s后删除所配置的软链接');
+        let pp = progress.create({repeatTotal: 100, repeatMessage:'--', loadMessage: '-'});
+        pp.start(2000, () => {
+            let targetPath;
+            for(let key in config.get('local')){
+                targetPath = path.normalize(path.join(cwd, config.get('root'), key));
+                try{
+                    fs.readlinkSync(targetPath);
+                    fs.unlinkSync(targetPath);
+                    logger.debug(targetPath,'已删除');
+                }catch(err){
 
-                        }
-                    }
-                });
-            }else{
-                removeProgressDefault();
+                }
             }
-        }
-    }catch(error){
+        });
+    }else{
         removeProgressDefault();
     }
-}
-
-//特殊指令处理
-switch (configFileName) {
-    case 'clean':
-        cleanServer();
-        break;
-    default:
-        createServer();
 }

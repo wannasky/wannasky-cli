@@ -1,5 +1,5 @@
 const {assert} = require('chai');
-const jshint = require('../lib/jshint');
+const jshint = require('../lib/core/jshint');
 
 describe('jshint测试', () => {
 

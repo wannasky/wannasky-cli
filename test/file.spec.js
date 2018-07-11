@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 const path = require('path');
-const file = require('../lib/file');
+const file = require('../lib/util/fileUtil');
 
 describe('测试 lib/file.js', () => {
 
