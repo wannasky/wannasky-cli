@@ -1,6 +1,6 @@
 {
     "name": "@wannasky/cli",
-    "version": "1.7.1",
+    "version": "1.7.2",
     "description": "前端打包cli工具",
     "main": "lib/cli/index.js",
     "keywords": [
