@@ -99,7 +99,7 @@ function cleanServer  () {
     }
 
     if(config.has('local')){
-        logger.info('存在local 配置项，2s后删除所配置的软链接');
+        logger.debug('存在local 配置项，2s后删除所配置的软链接');
         let pp = progress.create({repeatTotal: 100, repeatMessage:'--', loadMessage: '-'});
         pp.start(2000, () => {
             let targetPath;
