@@ -115,5 +115,36 @@ module.exports = {
 }
 ```
 
+### 代理数据保存并离线使用
+
+通过配置 `proxySave = true`并指定`testJsonDir`。
+
+```javascript
+module.exports = {
+    port: '8888',
+    root: './',
+    proxy: {
+        '/': {      // 这里是把所有请求都走代理
+            target: 'https://xx.xxx.xx.xx'
+        }
+    },
+    proxySave: true,    // 代理的数据保存本地
+    
+    testJsonDir: '__test'   // 代理数据保存的文件目录
+}
+```
+
+通过以上配置会在__test目录下生成代理的文件及映射关系（manifest.json）,然后通过配置 `useManifest`来使用
+
+```javascript
+module.exports = {
+    port: '8888',
+    root: './',
+    useManifest: true,  // 使用manifest.json配置来完成代理    
+    testJsonDir: '__test'   // 代理数据保存的文件目录
+}
+```
+
+
 ### LICENSE
 [MIT](LICENSE)
