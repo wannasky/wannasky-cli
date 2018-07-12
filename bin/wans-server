@@ -41,6 +41,7 @@ commander.on('--help', () => {
     help.l5.print('}');
     help.l4.print('}');
     help.l3.print('testJsonDir', `测试json目录 {string}`);
+    help.l3.print('proxySave', '是否保存代理生成的数据 {boolean},需配合testJsonDir使用');
     help.l1.print(`wans server ${chalk.cyan('clean')}`);
     help.l2.print('清除建立server时产生的symlink');
 });
@@ -89,7 +90,7 @@ function removeSymLink (directory) {
 
 //删除创建server后的软链接
 function cleanServer  () {
-    let cwd = progress.cwd();
+    let cwd = process.cwd();
     const removeProgressDefault = () => {
         let pp = progress.create({repeatTotal: 100, loadMessage: '---2s后删除当前目录下的所有软链接'});
         pp.start(2000, () => {
