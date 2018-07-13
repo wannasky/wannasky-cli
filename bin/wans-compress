@@ -62,7 +62,7 @@ function startCompress() {
 // 清除压缩的文件
 function cleanCompress() {
     if(config.has('compress')){
-        compress.clean(config.compress);
+        compress.clean(config.get('compress'));
     }else{
         logger.error('未发现 compress 配置项，请检查后重试');
     }
