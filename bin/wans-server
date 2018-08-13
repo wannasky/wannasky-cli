@@ -117,16 +117,20 @@ function cleanServer  () {
         logger.debug('存在local 配置项，2s后删除所配置的软链接');
         let pp = progress.create({repeatTotal: 100, repeatMessage:'--', loadMessage: '-'});
         pp.start(2000, () => {
-            let targetPath;
+            let targetPath, linksArray = [];
             for(let key in config.get('local')){
                 targetPath = path.normalize(path.join(cwd, config.get('root'), key));
-                try{
-                    fs.readlinkSync(targetPath);
-                    fs.unlinkSync(targetPath);
-                    logger.debug(targetPath,'已删除');
-                }catch(err){
+                linksArray.push(targetPath);
+            }
+            linksArray = linksArray.sort((a, b) => b.length - a.length);
+            try{
+                linksArray.forEach(item => {
+                    fs.readlinkSync(item);
+                    fs.unlinkSync(item);
+                    logger.debug(item,'已删除');
+                });
+            }catch(err){
 
-                }
             }
         });
     }else{
