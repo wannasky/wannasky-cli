@@ -31,7 +31,7 @@ commander.on('--help', () => {
     help.l4.print('files', `需要压缩的文件 {Array} 必填项`);
     help.l4.print('exclude', `不需要压缩的文件 {Array} 非必填`);
     help.l4.print('framework', `项目框架使用 {string} 目前只支持 angular 非必填`);
-    help.l4.print('options', `压缩自定义参数 {Object} 非必填`);
+    help.l4.print('options', `压缩自定义参数 {Object} 非必填，参数说明见README.md`);
     help.l1.print(`wans compress ${chalk.cyan('clean')}`);
     help.l2.print('清除压缩后的文件和目录');
 });

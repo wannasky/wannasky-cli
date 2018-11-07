@@ -144,7 +144,19 @@ module.exports = {
     testJsonDir: '__test'   // 代理数据保存的文件目录
 }
 ```
+### options参数支持说明
 
+```javascript
+{
+    css: {
+        // sourceMap: true   //编译后的css所在目录
+        // souceMap: '../map'  // 相对dist配置目录
+    },
+    compress: {
+        drop_console: false,  //见 https://www.npmjs.com/package/uglify-js
+    }
+}
+```
 
 ### LICENSE
 [MIT](LICENSE)

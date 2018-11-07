@@ -21,6 +21,11 @@ describe('compress测试', () => {
             filename: {
                 'css': '../css/[name].[ext]',
                 'js': '[name].min.[ext]'
+            },
+            options: {
+                css: {
+                    sourceMap: true
+                }
             }
         }
     }
