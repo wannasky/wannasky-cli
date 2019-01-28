@@ -158,5 +158,30 @@ module.exports = {
 }
 ```
 
+
+### router配置详情
+
+get或者post对应的方法参数有req, res, query, mock；其中 res包括如下方法：
+
++ res.json(value: {})  用来返回json内容
+
++ res.renderUrl(url: string) 返回指定文件内容，Content-Type会根据文件后缀自动匹配
+
++ res.next() 当条件判断失败后，可以主动调用，可模拟 nginx $try_files， eg:
+
+```javascript
+router: {
+    '/project/dist/module/': {
+        get: (req, res) => {
+            if(req.url === '/project/dist/module/' || !path.parse(req.url).ext) {
+                res.renderUrl('./project/dist/index.html')
+            } else {
+                res.next();
+            }
+        }
+    }
+}
+```
+
 ### LICENSE
 [MIT](LICENSE)
