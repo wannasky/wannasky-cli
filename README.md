@@ -158,6 +158,22 @@ module.exports = {
 }
 ```
 
+### local配置详情
+
+默认会建立symbol link，可通过 #copy改变默认行为为复制，再通过#watch(依附于#copy)来进行文件双向变更检测 eg:
+
+```javascript
+
+{
+    local: {
+        'web/test': 'E:\\repo\\test#copy',      // 仅复制 
+        'web/one': 'E:\\repo\\one#copy#watch'   // 文件复制及文件双向监听
+    }    
+}
+
+```
+
+
 
 ### router配置详情
 
