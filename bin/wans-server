@@ -123,15 +123,17 @@ function cleanServer  () {
                 linksArray.push(targetPath);
             }
             linksArray = linksArray.sort((a, b) => b.length - a.length);
-            try{
-                linksArray.forEach(item => {
-                    fs.readlinkSync(item);
+            let state;
+            linksArray.forEach(item => {
+                state = fs.lstatSync(item);
+                if(state.isSymbolicLink()) {
                     fs.unlinkSync(item);
                     logger.debug(item,'已删除');
-                });
-            }catch(err){
-
-            }
+                } else if(state.isDirectory()) {
+                    fileUtil.removeFile(item);
+                    logger.debug(item,'已删除');
+                }
+            });
         });
     }else{
         removeProgressDefault();
